@@ -1,0 +1,236 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>ImagesForCSS</title>
+
+  <style>
+    :root {
+      color-scheme: dark;
+      --bg: #0d1117;
+      --panel: #161b22;
+      --panel-2: #0f141b;
+      --border: #30363d;
+      --text: #e6edf3;
+      --muted: #8b949e;
+      --accent: #58a6ff;
+      --accent-hover: #79c0ff;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background: var(--bg);
+      color: var(--text);
+    }
+
+    .wrap {
+      width: min(1200px, calc(100% - 32px));
+      margin: 40px auto 60px;
+    }
+
+    h1 {
+      margin: 0 0 10px;
+      font-size: 2rem;
+    }
+
+    .subtitle {
+      margin: 0 0 24px;
+      color: var(--muted);
+      line-height: 1.5;
+    }
+
+    .panel {
+      background: var(--panel);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 20px;
+      margin-bottom: 24px;
+    }
+
+    .panel h2 {
+      margin-top: 0;
+      margin-bottom: 12px;
+      font-size: 1.2rem;
+    }
+
+    .code {
+      display: block;
+      margin-top: 12px;
+      padding: 12px 14px;
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      background: #010409;
+      color: #c9d1d9;
+      overflow-wrap: anywhere;
+      white-space: pre-wrap;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+      font-size: 0.95rem;
+    }
+
+    .gallery {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 18px;
+    }
+
+    .card {
+      background: var(--panel-2);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .thumb-link {
+      display: block;
+      background: #000;
+    }
+
+    .thumb {
+      display: block;
+      width: 100%;
+      aspect-ratio: 16 / 9;
+      object-fit: cover;
+      background: #000;
+    }
+
+    .card-body {
+      padding: 14px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .card-title {
+      margin: 0;
+      font-size: 1rem;
+    }
+
+    .card-path {
+      margin: 0;
+      color: var(--muted);
+      font-size: 0.9rem;
+      overflow-wrap: anywhere;
+    }
+
+    .actions {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin-top: 4px;
+    }
+
+    .btn {
+      appearance: none;
+      border: 1px solid var(--border);
+      background: #1f2937;
+      color: var(--text);
+      padding: 10px 12px;
+      border-radius: 10px;
+      text-decoration: none;
+      cursor: pointer;
+      font: inherit;
+      transition: 0.15s ease;
+    }
+
+    .btn:hover {
+      border-color: var(--accent);
+      color: var(--accent-hover);
+    }
+
+    .footer-note {
+      margin-top: 10px;
+      color: var(--muted);
+      font-size: 0.95rem;
+      line-height: 1.5;
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <h1>ImagesForCSS</h1>
+    <p class="subtitle">
+      Static image assets hosted with GitHub Pages for use in CSS themes.
+      Click an image to open it directly, or copy the direct URL / CSS line.
+    </p>
+
+    <section class="panel">
+      <h2>How to use</h2>
+      <div class="code">--background-image-url: url('https://thatshush.github.io/ImagesForCSS/backgrounds/your-image.png');</div>
+      <p class="footer-note">
+        Upload future backgrounds into the <strong>backgrounds/</strong> folder.
+        Then add one entry to the image list inside this page.
+      </p>
+    </section>
+
+    <section class="panel">
+      <h2>Background Gallery</h2>
+      <div id="gallery" class="gallery"></div>
+    </section>
+  </div>
+
+  <script>
+    const baseUrl = "https://thatshush.github.io/ImagesForCSS/";
+
+    /*
+      Add new images here.
+      Example:
+      { title: "Cozy Room", path: "backgrounds/cozy-room.png" }
+    */
+    const images = [
+      {
+        title: "PageHearth Hero Wordmark",
+        path: "PageHearth_Hero_Wordmark.png"
+      }
+    ];
+
+    const gallery = document.getElementById("gallery");
+
+    function makeCard(item) {
+      const fullUrl = baseUrl + item.path;
+      const cssLine = `--background-image-url: url('${fullUrl}');`;
+
+      const card = document.createElement("article");
+      card.className = "card";
+
+      card.innerHTML = `
+        <a class="thumb-link" href="${fullUrl}" target="_blank" rel="noopener noreferrer">
+          <img class="thumb" src="${fullUrl}" alt="${item.title}">
+        </a>
+        <div class="card-body">
+          <h3 class="card-title">${item.title}</h3>
+          <p class="card-path">${item.path}</p>
+          <div class="actions">
+            <a class="btn" href="${fullUrl}" target="_blank" rel="noopener noreferrer">Open Image</a>
+            <button class="btn copy-url">Copy URL</button>
+            <button class="btn copy-css">Copy CSS</button>
+          </div>
+        </div>
+      `;
+
+      card.querySelector(".copy-url").addEventListener("click", async () => {
+        await navigator.clipboard.writeText(fullUrl);
+        alert("Copied image URL.");
+      });
+
+      card.querySelector(".copy-css").addEventListener("click", async () => {
+        await navigator.clipboard.writeText(cssLine);
+        alert("Copied CSS line.");
+      });
+
+      return card;
+    }
+
+    images.forEach(item => {
+      gallery.appendChild(makeCard(item));
+    });
+  </script>
+</body>
+</html>
